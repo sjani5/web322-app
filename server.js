@@ -1,14 +1,16 @@
 /*********************************************************************************
-*  WEB322 – Assignment 2
-*  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  
-*  No part of this assignment has been copied manually or electronically from any other source
-*  (including web sites) or distributed to other students.
-* 
-*  Name: ______Alex Lin________________ Student ID: __128779220____________ Date: __2023/5/30______________
-*
-*  Online (Cyclic) URL: https://weary-fox-fashion.cyclic.app/about
-*
+
+WEB322 – Assignment 02
+I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part *  of this assignment has been copied manually or electronically from any other source (including 3rd party web sites) or distributed to other students.
+
+Name: Shubh Jani 
+Student ID: 153660212 
+Date: 2 June 2023
+Cyclic Web App URL: _______________________________________________________
+GitHub Repository URL: ______________________________________________________
+
 ********************************************************************************/ 
+
 
 const express = require('express')
 const store_service = require('./store-service')
