@@ -6,8 +6,8 @@ I declare that this assignment is my own work in accordance with Seneca  Academi
 Name: Shubh Jani 
 Student ID: 153660212 
 Date: 2 June 2023
-Cyclic Web App URL: _______________________________________________________
-GitHub Repository URL: ______________________________________________________
+Cyclic Web App URL:  https://long-puce-cobra-hose.cyclic.app
+GitHub Repository URL: https://github.com/sjani5/web322-app.git
 
 ********************************************************************************/ 
 
