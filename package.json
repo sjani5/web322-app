@@ -1,7 +1,7 @@
 {
   "name": "web322-app",
   "version": "1.0.0",
-  "description": "Assignment-3",
+  "description": "assignment 2 for web322 2023 summer",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,7 +10,6 @@
   "author": "Shubh Jani",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "multer": "^1.4.5-lts.1"
+    "express": "^4.18.2"
   }
 }

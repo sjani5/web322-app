@@ -6,7 +6,7 @@ I declare that this assignment is my own work in accordance with Seneca  Academi
 Name: Shubh Jani 
 Student ID: 153660212 
 Date: 16 June 2023
-Cyclic Web App URL:   https://cute-teal-beaver-garb.cyclic.app
+Cyclic Web App URL:   https://fair-long-underwear-eel.cyclic.app/
 GitHub Repository URL: https://github.com/sjani5/web322-app.git
 
 ********************************************************************************/ 
