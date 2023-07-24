@@ -5,7 +5,7 @@ const helpers = require('./handlebars-helpers');
 
 handlebars.registerHelper(helpers);
 
-const sequelize = new Sequelize('jgygufri', 'jgygufri', 'vWnjpS7vydomOTcW3JAYIzhWXu_EcJuC', {
+const sequelize = new Sequelize('ceowxqjs', 'ceowxqjs', 'tmTn53kZqBI5ve5Sq_ZS-4p65ih0rTj0', {
   host: 'mahmud.db.elephantsql.com',
   dialect: 'postgres',
   port: 5432,
