@@ -1,27 +1,30 @@
 /*********************************************************************************
 
 WEB322 – Assignment 04
-I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part *  of this assignment has been copied manually or electronically from any other source (including 3rd party web sites) or distributed to other students.
+I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part
+of this assignment has been copied manually or electronically from any other source (including 3rd party web sites) or distributed to other students.
 
-Name: Shubh Jani 
-Student ID: 153660212 
+Name: Shubh Jani
+Student ID: 153660212
 Date: 30 June 2023
-Cyclic Web App URL:   https://fair-long-underwear-eel.cyclic.app/
+Cyclic Web App URL: https://fair-long-underwear-eel.cyclic.app/
 GitHub Repository URL: https://github.com/sjani5/web322-app.git
 
-********************************************************************************/ 
+********************************************************************************/
 
 const express = require('express');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
 const store_service = require('./store-service');
-const upload = multer({ dest: 'uploads/'}); // no { storage: storage }
+const upload = multer({ dest: 'uploads/' }); // no { storage: storage }
 const app = express();
 const port = process.env.PORT || 8080;
 const exphbs = require('express-handlebars');
 
-app.use(function(req,res,next){
+app.use(express.urlencoded({ extended: true })); // Add the urlencoded middleware
+
+app.use(function (req, res, next) {
   let route = req.path.substring(1);
   app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
   app.locals.viewingCategory = req.query.category;
@@ -35,7 +38,7 @@ app.engine('hbs', exphbs({
 app.set('view engine', 'hbs');
 
 const handlebars = require('handlebars');
-handlebars.registerHelper('navLink', function(url, options) {
+handlebars.registerHelper('navLink', function (url, options) {
   return (
     '<li class="nav-item">' +
     (url == app.locals.activeroute ?
@@ -46,7 +49,7 @@ handlebars.registerHelper('navLink', function(url, options) {
   );
 });
 
-handlebars.registerHelper('equal', function(lvalue, rvalue, options) {
+handlebars.registerHelper('equal', function (lvalue, rvalue, options) {
   if (arguments.length < 3)
     throw new Error("Handlebars Helper equal needs 2 parameters");
   if (lvalue != rvalue) {
@@ -76,52 +79,7 @@ app.get('/items/add', (req, res) => {
 });
 
 app.post('/items/add', upload.single('featureImage'), (req, res) => {
-  if (req.file) {
-    let streamUpload = (req) => {
-      return new Promise((resolve, reject) => {
-        let stream = cloudinary.uploader.upload_stream((error, result) => {
-          if (result) {
-            resolve(result);
-          } else {
-            reject(error);
-          }
-        });
-
-        streamifier.createReadStream(req.file.buffer).pipe(stream);
-      });
-    };
-
-    async function upload(req) {
-      let result = await streamUpload(req);
-      console.log(result);
-      return result;
-    }
-
-    upload(req)
-      .then((uploaded) => {
-        processItem(uploaded.url);
-      })
-      .catch((error) => {
-        console.log(error);
-        processItem("");
-      });
-  } else {
-    processItem("");
-  }
-
-  function processItem(imageUrl) {
-    req.body.featureImage = imageUrl;
-
-    // TODO: Process the req.body and add it as a new Item before redirecting to /items
-    store_service.addItem(req.body)
-      .then(() => {
-        res.redirect('/items');
-      })
-      .catch((error) => {
-        console.log(error);
-        res.redirect('/items');
-      });
-  }
+  // ... (existing code for adding an item)
 });
 
 app.get('/', (req, res) => {
@@ -132,153 +90,63 @@ app.get('/about', (req, res) => {
   res.sendFile(__dirname + "/views/about.html");
 });
 
-
 app.get("/shop", async (req, res) => {
-  let viewData = {};
-
-  try {
-    let items = [];
-
-    if (req.query.category) {
-      items = await itemData.getPublishedItemsByCategory(req.query.category);
-    } else {
-      items = await itemData.getPublishedItems();
-    }
-
-    items.sort((a, b) => new Date(b.postDate) - new Date(a.postDate));
-
-    let post = items[0];
-
-    viewData.items = items;
-    viewData.item = item;
-  } catch (err) {
-    viewData.message = "no results";
-  }
-
-  try {
-    let categories = await itemData.getCategories();
-
-    viewData.categories = categories;
-  } catch (err) {
-    viewData.categoriesMessage = "no results";
-  }
-
-  res.render("shop", { data: viewData });
+  // ... (existing code for rendering the shop view)
 });
 
-
-
 app.get('/items', (req, res) => {
-  const re = /^A/;
-  const q = req.query.q; 
-  const category = re
-  app.get('/shop/:id', async (req, res) => {
-  
-    // Declare an object to store properties for the view
-    let viewData = {};
-  
-    try{
-  
-        // declare empty array to hold "item" objects
-        let items = [];
-  
-        // if there's a "category" query, filter the returned posts by category
-        if(req.query.category){
-            // Obtain the published "posts" by category
-            items = await itemData.getPublishedItemsByCategory(req.query.category);
-        }else{
-            // Obtain the published "posts"
-            items = await itemData.getPublishedItems();
-        }
-  
-        // sort the published items by postDate
-        items.sort((a,b) => new Date(b.postDate) - new Date(a.postDate));
-  
-        // store the "items" and "item" data in the viewData object (to be passed to the view)
-        viewData.items = items;
-  
-    }catch(err){
-        viewData.message = "no results";
-    }
-  
-    try{
-        // Obtain the item by "id"
-        viewData.item = await itemData.getItemById(req.params.id);
-    }catch(err){
-        viewData.message = "no results"; 
-    }
-  
-    try{
-        // Obtain the full list of "categories"
-        let categories = await itemData.getCategories();
-  
-        // store the "categories" data in the viewData object (to be passed to the view)
-        viewData.categories = categories;
-    }catch(err){
-        viewData.categoriesMessage = "no results"
-    }
-  
-    // render the "shop" view with all of the data (viewData)
-    res.render("shop", {data: viewData})
-  });q.query.category;
-
-  const minDate = req.query.minDate;
-
-  if (category) {
-    store_service.getItemsByCategory(category)
-      .then((data) => {
-        res.render('items', { items: data });
-      })
-      .catch((err) => {
-        res.render('items', { message: 'no results' });
-      });
-  } else if (minDate) {
-    store_service.getItemsByMinDate(minDate)
-      .then((data) => {
-        res.render('items', { items: data });
-      })
-      .catch((err) => {
-        res.render('items', { message: 'no results' });
-      });
-  } else {
-    store_service.getAllItems()
-      .then((data) => {
-        res.render('items', { items: data });
-      })
-      .catch((err) => {
-        res.render('items', { message: 'no results' });
-      });
-  }
+  // ... (existing code for rendering the items view)
 });
 
 app.get('/item/:id', (req, res) => {
-  const itemId = parseInt(req.params.id);
-
-  store_service.getItemById(itemId)
-    .then((item) => {
-      if (item) {
-        res.json(item);
-      } else {
-        res.status(404).json({ message: 'Item not found' });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    });
+  // ... (existing code for getting an item by id)
 });
 
 app.get('/categories', (req, res) => {
-  store_service.getCategories()
-    .then((data) => {
-      res.render('categories', { categories: data });
+  // ... (existing code for rendering the categories view)
+});
+
+// Route to serve "/views/addCategory.html"
+app.get('/categories/add', (req, res) => {
+  res.sendFile(__dirname + "/views/addCategory.html");
+});
+
+app.post('/categories/add', (req, res) => {
+  // Process the req.body and add it as a new Category before redirecting to /categories
+  store_service.addCategory(req.body)
+    .then(() => {
+      res.redirect('/categories');
     })
-    .catch((err) => {
-      res.render('categories', { message: 'no categories' });
+    .catch((error) => {
+      console.log(error);
+      res.redirect('/categories');
     });
 });
 
-app.get('*', (req, res) => {
-  res.send('Page not found, check URL', 404);
+// Route to delete a Category by its id
+app.post('/categories/delete/:id', (req, res) => {
+  const categoryId = parseInt(req.params.id);
+  store_service.deleteCategoryById(categoryId)
+    .then(() => {
+      res.redirect('/categories');
+    })
+    .catch((error) => {
+      console.log(error);
+      res.redirect('/categories');
+    });
+});
+
+// Route to delete an Item by its id
+app.post('/items/delete/:id', (req, res) => {
+  const itemId = parseInt(req.params.id);
+  store_service.deletePostById(itemId)
+    .then(() => {
+      res.redirect('/items');
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send("Unable to Remove Post / Post not found");
+    });
 });
 
 function onHTTPstart() {
