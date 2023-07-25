@@ -15,8 +15,6 @@ const sequelize = new Sequelize('ceowxqjs', 'ceowxqjs', 'tmTn53kZqBI5ve5Sq_ZS-4p
   query: { raw: true }
 });
 
-
-
 const Category = sequelize.define('Category', {
   category: {
     type: Sequelize.STRING,
@@ -53,106 +51,20 @@ const Item = sequelize.define('Item', {
 
 Item.belongsTo(Category, { foreignKey: 'category' });
 
-(async () => {
+// Initialize function to sync database models
+const initialize = async () => {
   try {
     await sequelize.sync({ force: false });
     console.log('Models synchronized successfully.');
   } catch (error) {
     console.error('Error synchronizing models:', error);
   }
-})();
-
-module.exports.deletePostById = (id) => {
-  return Item.destroy({
-    where: {
-      id: id
-    }
-  });
 };
 
-module.exports.initialize = () => {
-  return sequelize.sync();
-};
-
-module.exports.getAllItems = () => {
-  return Item.findAll();
-};
-
-module.exports.getItemsByCategory = (category) => {
-  return Item.findAll({
-    where: {
-      category: category
-    }
-  });
-};
-
-module.exports.getItemsByMinDate = (minDateStr) => {
-  const { Op } = Sequelize;
-  return Item.findAll({
-    where: {
-      postDate: {
-        [Op.gte]: new Date(minDateStr)
-      }
-    }
-  });
-};
-
-module.exports.getItemById = (id) => {
-  return Item.findByPk(id);
-  };
-
-module.exports.addItem = (itemData) => {
-  itemData.published = itemData.published ? true : false;
-  for (let key in itemData) {
-    if (itemData.hasOwnProperty(key) && itemData[key] === "") {
-      itemData[key] = null;
-    }
-  }
-  itemData.postDate = new Date();
-  return Item.create(itemData);
-};
-
-module.exports.getPublishedItems = () => {
-  return Item.findAll({
-    where: {
-      published: true
-    }
-  });
-};
-
-module.exports.getPublishedItemsByCategory = (category) => {
-  return Item.findAll({
-    where: {
-      published: true,
-      category: category
-    }
-  });
-};
-
-module.exports.getCategories = () => {
-  return Category.findAll();
-};
-module.exports.addCategory = (categoryData) => {
-  for (let key in categoryData) {
-    if (categoryData.hasOwnProperty(key) && categoryData[key] === "") {
-      categoryData[key] = null;
-    }
-  }
-  return Category.create(categoryData);
-};
-
-module.exports.deleteCategoryById = (id) => {
-  return Category.destroy({
-    where: {
-      id: id
-    }
-  });
-};
-
-module.exports.deletePostById = (id) => {
-  return Item.destroy({
-    where: {
-      id: id
-    }
-  });
+// Export the sequelize instance, models, and the initialize function
+module.exports = {
+  sequelize,
+  Category,
+  Item,
+  initialize, // Export the initialize function
 };

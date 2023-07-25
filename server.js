@@ -16,7 +16,7 @@ const express = require('express');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
-const store_service = require('./store-service');
+const { initialize } = require('./store-service');
 const upload = multer({ dest: 'uploads/' }); // no { storage: storage }
 const app = express();
 const port = process.env.PORT || 8080;
@@ -36,6 +36,10 @@ app.engine('hbs', exphbs({
   extname: '.hbs'
 }));
 app.set('view engine', 'hbs');
+
+
+initialize();
+
 
 const handlebars = require('handlebars');
 handlebars.registerHelper('navLink', function (url, options) {
@@ -102,20 +106,20 @@ app.get('/item/:id', (req, res) => {
   // ... (existing code for getting an item by id)
 });
 
-app.get('/categories', (req, res) => {
+app.get('../views/categories', (req, res) => {
   // ... (existing code for rendering the categories view)
 });
 
 // Route to serve "/views/addCategory.html"
-app.get('/categories/add', (req, res) => {
+app.get('../views/categories/add', (req, res) => {
   res.sendFile(__dirname + "/views/addCategory.html");
 });
 
-app.post('/categories/add', (req, res) => {
+app.post('../views/categories/add', (req, res) => {
   // Process the req.body and add it as a new Category before redirecting to /categories
   store_service.addCategory(req.body)
     .then(() => {
-      res.redirect('/categories');
+      res.redirect('s/categories');
     })
     .catch((error) => {
       console.log(error);
@@ -141,7 +145,7 @@ app.post('/items/delete/:id', (req, res) => {
   const itemId = parseInt(req.params.id);
   store_service.deletePostById(itemId)
     .then(() => {
-      res.redirect('/items');
+      res.redirect('../views/items');
     })
     .catch((error) => {
       console.log(error);
@@ -153,7 +157,7 @@ function onHTTPstart() {
   console.log("Server started on port: " + port);
 }
 
-store_service.initialize()
+initialize()
   .then(() => {
     app.listen(port, onHTTPstart);
   })

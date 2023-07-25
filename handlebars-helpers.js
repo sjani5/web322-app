@@ -1,4 +1,3 @@
-// handlebars-helpers.js
 module.exports = {
     formatDate: function(dateObj) {
       let year = dateObj.getFullYear();
